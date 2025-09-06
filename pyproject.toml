@@ -1,7 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "project-1-ml"
-version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
-requires-python = ">=3.12"
-dependencies = []
+name = "Project-1-ml"
+version = "0.0.1"
+description = "My ML project"
+authors = [{ name = "Abhinav", email = "abhinavkumarsingh2023@gmail.com" }]
+dependencies = [
+    "pandas==2.3.2",
+    "numpy==2.3.2",
+    "seaborn==0.13.2",
+]
