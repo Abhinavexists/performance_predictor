@@ -1,5 +1,4 @@
-import sys
-from src.exception import CustomException
+from src.exception import CustomException, tb
 from src.logger import logging
 import pandas as pd
 from pathlib import Path
@@ -22,15 +21,17 @@ class DataIngestion:
 
         try:
             df = pd.read_csv("notebooks/data/Student.csv")
+            
             logging.info("Read the dataset as dataframe")
 
             self.ingestion_config.train_data_path.parent.mkdir(parents=True, exist_ok=True)
             df.to_csv(self.ingestion_config.raw_data_path, index=False, header=True)
 
             logging.info("Train-Test Split Initiated")
+            
             train_set, test_set = train_test_split(df, train_size=0.8, test_size=0.2, random_state=42)
-            train_set.to_csv(self.ingestion_config.train_data_path, index=True, header=False)
-            test_set.to_csv(self.ingestion_config.test_data_path, index=True, header=False)
+            train_set.to_csv(self.ingestion_config.train_data_path, index=False, header=True)
+            test_set.to_csv(self.ingestion_config.test_data_path, index=False, header=True)
 
             logging.info("Ingestion of data is completed")
 
@@ -40,7 +41,6 @@ class DataIngestion:
             )
 
         except Exception as e:
-            tb = sys.exc_info()[2]
             if tb is not None:
                 CustomException(error_message=e, error_detail=tb)
             else:

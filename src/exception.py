@@ -1,9 +1,12 @@
-# import sys
+import sys
 from types import TracebackType
+from typing import Optional
 
 # def error_message_details(error, error_details:sys) -> here sys is just for type hinting 
 
-def error_message_details(error: Exception, error_details: TracebackType) -> str:
+tb = sys.exc_info()[2]
+
+def error_message_details(error: Exception, error_details: Optional[TracebackType] = tb) -> str:
     file_name = error_details.tb_frame.f_code.co_filename if error_details else None
     line_no = error_details.tb_lineno if error_details else None
 
