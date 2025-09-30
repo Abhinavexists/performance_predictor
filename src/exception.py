@@ -4,6 +4,10 @@ from typing import Optional
 
 # def error_message_details(error, error_details:sys) -> here sys is just for type hinting 
 
+# sys.exc_info()[2] can return either a TracebackType or None. 
+# so type checkers complain because None is not allowed in the signature.
+# Need to allow Optional[TracebackType] to handle both TraceBack and None
+
 tb = sys.exc_info()[2]
 
 def error_message_details(error: Exception, error_details: Optional[TracebackType] = tb) -> str:
@@ -14,7 +18,7 @@ def error_message_details(error: Exception, error_details: Optional[TracebackTyp
     return error_message
 
 class CustomException(Exception):
-    def __init__(self, error_message: Exception, error_detail: TracebackType):
+    def __init__(self, error_message: Exception, error_detail: Optional[TracebackType] = tb):
         super().__init__(error_message)
         self.error_message = error_message_details(error_message, error_details=error_detail)
 

@@ -9,14 +9,14 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
  
 from src.utils import save_object
-from src.exception import CustomException, tb
+from src.exception import CustomException
 from src.logger import logging
 
 @dataclass
 class DataTransformationConfig:
     preprocessor_obj_file_path: Path = field(default_factory=lambda: Path.cwd() / 'artifacts' / 'preprocessor.pkl')
 
-class DataTrasformation:
+class DataTransformation:
     def __init__(self):
         self.data_transformation_config = DataTransformationConfig()
 
@@ -67,10 +67,7 @@ class DataTrasformation:
             return preprocessor
 
         except Exception as e:
-            if tb is not None:
-                CustomException(error_message=e, error_detail=tb)
-            else:
-                pass
+            raise CustomException(error_message=e)
 
     def init_data_transformation(self, train_path, test_path):
         try:
@@ -90,19 +87,19 @@ class DataTrasformation:
             input_feature_test_df = test_df.drop(columns=target_column, axis=1)
             target_feature_test_df = test_df[target_column]
 
-            input_feature_train = preprocessor_obj.fit_transform(input_feature_train_df) if preprocessor_obj else None
+            input_feature_train = preprocessor_obj.fit_transform(input_feature_train_df)
 
             logging.info("Completed fit_transform on training data")
 
-            input_feature_test = preprocessor_obj.transform(input_feature_test_df) if preprocessor_obj else None
+            input_feature_test = preprocessor_obj.transform(input_feature_test_df)
 
             logging.info("Completed transform on test data")
 
-            train = np.c_[
+            train_array = np.c_[
                 input_feature_train, np.array(target_feature_train_df)
             ]
 
-            test = np.c_[
+            test_array = np.c_[
                 input_feature_test, np.array(target_feature_test_df)
             ]
 
@@ -114,17 +111,10 @@ class DataTrasformation:
             )
 
             return [
-                train,
-                test,
+                train_array,
+                test_array,
                 self.data_transformation_config.preprocessor_obj_file_path,
             ]
         
         except Exception as e:
-            if tb is not None:
-                CustomException(error_message=e, error_detail=tb)
-            else:
-                pass
-
-if __name__ == "__main__":
-    dt = DataTrasformation()
-    dt.init_data_transformation(train_path="artifacts/train.csv", test_path="artifacts/test.csv")
+            raise CustomException(error_message=e)
