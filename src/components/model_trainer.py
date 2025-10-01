@@ -48,15 +48,7 @@ class ModelTrainer:
                 "AdaBoost Regressor": AdaBoostRegressor()
             }
 
-            # params = load_params(path=Path('/home/abhinav/Projects/Project-1-ML/src/config/params.yml'))
-            params = {}
-
-            try:
-                print(f"Params file exists: {Path('/home/abhinav/Projects/Project-1-ML/src/config/params.yml').exists()}")
-                params = load_params(Path('/home/abhinav/Projects/Project-1-ML/src/config/params.yml'))
-                print(f"Loaded params: {params}")
-            except Exception as e:
-                print(f"Error loading params: {e}")
+            params = load_params()
 
             model_report: Optional[dict] = evaluate_model(x_train=x_train, y_train=y_train, 
                                                 x_test=x_test, y_test=y_test, models=models, params=params)

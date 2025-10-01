@@ -2,12 +2,12 @@ import yaml
 import dill
 from pathlib import Path
 from sklearn.metrics import r2_score
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from src.logger import logging
 
-from src.exception import CustomException, tb
+from src.exception import CustomException
 
-def load_params(path: Path = Path('config/params.yml')) -> dict:
+def load_params(path: Path = Path('src/config/params.yml')) -> dict:
      with open(path, 'r') as file:
           logging.info('param use started')
           params =yaml.safe_load(file)
@@ -23,29 +23,46 @@ def save_object(file_path: Path, obj):
             dill.dump(obj, file)
 
     except Exception as e:
-            raise CustomException(error_message=e, error_detail=tb)
+            raise CustomException(error_message=e)
 
 def evaluate_model(x_train, y_train, x_test, y_test, models, params):
     try:
         report: dict = {}
 
-        for i in range(len(list(models))):
-            model = list(models.values())[i]
-            para = list(params.values())[i]
+        for model_name, model in models.items():
+            para  = params.get(model_name, {})
 
-            gs = GridSearchCV(model, para, cv=3, verbose=True)
-            gs.fit(x_train, y_train)
+            # gs = GridSearchCV(model, para, cv=3, verbose=True)
+            # gs.fit(x_train, y_train)
 
-            model.set_params(**gs.best_params_)
+            rs = RandomizedSearchCV(model, para, n_iter=50, cv=3, random_state=42, verbose=42)
+            rs.fit(x_train, y_train)
+
+            model.set_params(**rs.best_params_)
             model.fit(x_train, y_train)
 
-            # y_train_pred = model.predict(x_train)
             y_test_pred = model.predict(x_test)
-
-            # train_model_score = r2_score(y_train, y_train_pred)
             test_model_score = r2_score(y_test, y_test_pred)
 
-            report[list(models.keys())[i]] = test_model_score
+            report[model_name] = test_model_score
+
+        # for i in range(len(list(models))):
+        #     model = list(models.values())[i]
+        #     para = list(params.values())[i]
+
+        #     gs = GridSearchCV(model, para, cv=3, verbose=True)
+        #     gs.fit(x_train, y_train)
+
+        #     model.set_params(**gs.best_params_)
+        #     model.fit(x_train, y_train)
+
+        #     # y_train_pred = model.predict(x_train)
+        #     y_test_pred = model.predict(x_test)
+
+        #     # train_model_score = r2_score(y_train, y_train_pred)
+        #     test_model_score = r2_score(y_test, y_test_pred)
+
+        #     report[list(models.keys())[i]] = test_model_score
 
         return report
 
