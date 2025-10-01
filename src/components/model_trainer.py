@@ -1,5 +1,4 @@
-import os
-import sys
+import yaml
 from pathlib import Path
 from dataclasses import dataclass, field
 from typing import Optional
@@ -18,7 +17,7 @@ from sklearn.metrics import r2_score
 
 from src.exception import CustomException
 from src.logger import logging
-from src.utils import save_object, evaluate_model
+from src.utils import save_object, evaluate_model, load_params
 
 @dataclass
 class ModelTrainerConfig:
@@ -49,8 +48,18 @@ class ModelTrainer:
                 "AdaBoost Regressor": AdaBoostRegressor()
             }
 
+            # params = load_params(path=Path('/home/abhinav/Projects/Project-1-ML/src/config/params.yml'))
+            params = {}
+
+            try:
+                print(f"Params file exists: {Path('/home/abhinav/Projects/Project-1-ML/src/config/params.yml').exists()}")
+                params = load_params(Path('/home/abhinav/Projects/Project-1-ML/src/config/params.yml'))
+                print(f"Loaded params: {params}")
+            except Exception as e:
+                print(f"Error loading params: {e}")
+
             model_report: Optional[dict] = evaluate_model(x_train=x_train, y_train=y_train, 
-                                                x_test=x_test, y_test=y_test, models=models)
+                                                x_test=x_test, y_test=y_test, models=models, params=params)
             
             best_model_score = max(model_report.values())
 
