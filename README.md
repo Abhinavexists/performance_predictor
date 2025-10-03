@@ -60,8 +60,8 @@ The application is deployed on AWS Elastic Beanstalk. You can access the live de
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/Abhinavexists/project-1-ml.git
-   cd Project-1-ML
+   git clone https://github.com/Abhinavexists/performance_predictor.git
+   cd performance_predictor
    ```
 
 2. **Create a virtual environment**
