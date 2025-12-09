@@ -8,11 +8,15 @@ from src.logger import logging
 from src.exception import CustomException
 
 def load_params(path: Path = Path('src/config/params.yml')) -> dict:
-     with open(path, 'r') as file:
-          logging.info('param use started')
-          params =yaml.safe_load(file)
-          logging.info(params)
-     return params
+    try:
+        with open(path, 'r') as file:
+            logging.info('param use started')
+            params =yaml.safe_load(file)
+            logging.info(params)
+        return params
+    
+    except Exception as e:
+         raise CustomException(e) from e # Preserves exception chain
 
 def save_object(file_path: Path, obj):
     try:
@@ -23,14 +27,15 @@ def save_object(file_path: Path, obj):
             dill.dump(obj, file)
 
     except Exception as e:
-            raise CustomException(error_message=e)
+            raise CustomException(e) from e
     
 def load_object(file_path: Path):
-     try:
-          with open(file_path, 'rb') as file:
-               return dill.load(file)
-     except Exception as e:
-          raise CustomException(error_message=e)
+    try:
+        with open(file_path, 'rb') as file:
+            return dill.load(file)
+    
+    except Exception as e:
+        raise CustomException(e) from e
 
 def evaluate_model(x_train, y_train, x_test, y_test, models, params):
     try:
@@ -74,4 +79,4 @@ def evaluate_model(x_train, y_train, x_test, y_test, models, params):
         return report
 
     except Exception as e:
-            raise CustomException(error_message=e)
+            raise CustomException(e) from e

@@ -44,7 +44,7 @@ class DataIngestion:
             )
 
         except Exception as e:
-                raise CustomException(error_message=e)
+                raise CustomException(e) from e
 
 if __name__ == "__main__":
     di = DataIngestion()

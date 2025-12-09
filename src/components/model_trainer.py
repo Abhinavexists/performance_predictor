@@ -1,4 +1,3 @@
-import yaml
 from pathlib import Path
 from dataclasses import dataclass, field
 from typing import Optional
@@ -80,4 +79,4 @@ class ModelTrainer:
             return R2_score, preprocessor_obj_file_path
 
         except Exception as e:
-            raise CustomException(error_message=e)
+            raise CustomException(e) from e

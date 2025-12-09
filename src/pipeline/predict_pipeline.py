@@ -1,11 +1,7 @@
-import sys
-import os
 import pandas as pd
-import numpy as np
 from pathlib import Path
 
 from src.exception import CustomException
-from src.logger import logging
 from src.utils import load_object
 
 class PredictPipeline:
@@ -23,7 +19,7 @@ class PredictPipeline:
             return pred
         
         except Exception as e:
-            raise CustomException(e)
+            raise CustomException(e) from e
 
 class CustomData:
     def __init__(self, gender: str,
@@ -56,4 +52,4 @@ class CustomData:
             return pd.DataFrame(custom_data_input)
         
         except Exception as e:
-            raise CustomException(e)
+            raise CustomException(e) from e
